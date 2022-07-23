@@ -15,19 +15,22 @@ const (
 var rng = rand.Reader
 
 func main() {
-	GeneratePairs(3, 3)
+	secret := csidh.RandomFp()
+	fmt.Println(secret)
+	GeneratePairs(3, secret)
 }
 
-func GeneratePairs(message int, secret int) { // Create pairs based on (3) of the CSI-RAShi paper
+func GeneratePairs(message int, secret csidh.Fp) { // Create pairs based on (3) of the CSI-RAShi paper
 	E := make([]csidh.Fp, message) // E as the set of random points
 	var A csidh.FpRngGen
 	var V csidh.Fp
-	Ep := make([]csidh.Fp, message) // Ep as the set of random points with group action of the secret
+	// var Secret = csidh.
+	// Ep := make([]csidh.Fp, message) // Ep as the set of random points with group action of the secret
 	for i := range E {
 		A.RandFp(&V, rng)
 		E[i] = V
-		Ep[i] = E[i] * secret // Need to add each element with secret
+		//	Ep[i] = E[i] + Secret // Need to add each element with secret
 	}
 	fmt.Println(E)
-	fmt.Println(Ep)
+	//fmt.Println(Ep)
 }
