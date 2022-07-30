@@ -10,12 +10,21 @@ import (
 var rng = rand.Reader
 
 func main() {
-	var alice_priv csidh.PrivateKey
-	var alice_pub csidh.PublicKey
+	GeneratePairs(6)
+}
 
-	// Alice generates random secret, and then public key
-	csidh.GeneratePrivateKey(&alice_priv, rng)
-	csidh.GroupAction(&alice_pub, &alice_priv, rng)
-
-	fmt.Println(&alice_pub)
+func GeneratePairs(message int) { // Create pairs based on (3) of the CSI-RAShi paper
+	var secret csidh.PrivateKey
+	csidh.GeneratePrivateKey(&secret, rng)
+	Initial_set := make([]csidh.PublicKey, message)
+	GroupActionSet := make([]csidh.PublicKey, message)
+	for i := range Initial_set {
+		var pub csidh.PublicKey
+		csidh.GeneratePublicKey(&pub, &secret, rng)
+		Initial_set[i] = pub
+		csidh.GroupAction(&pub, &secret, rng)
+		GroupActionSet[i] = pub
+	}
+	fmt.Println(Initial_set)
+	fmt.Println(GroupActionSet)
 }
