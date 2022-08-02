@@ -3,21 +3,24 @@ package main
 import (
 	"crypto/rand"
 	"fmt"
+	"strconv"
 
 	"github.com/brykumara/circlclone/csidh"
-	"github.com/cloudflare/circl/dh/csidh"
 )
 
 const (
 	Lambda  = 128
-	message = 3
+	message = 2
 )
 
 var rng = rand.Reader
 
 func main() {
+
 	GeneratePairs(message)
+
 }
+
 func GeneratePairs(message int) { // Create pairs based on (3) of the CSI-RAShi paper
 	var secret csidh.PrivateKey
 	csidh.GeneratePrivateKey(&secret, rng)
@@ -47,5 +50,13 @@ func NIZKP(Initial_set []csidh.PublicKey, GroupActionSet []csidh.PublicKey, secr
 			Challenge_set1[j+i] = Initial_set[i+j]
 		}
 	}
+
+	HashInput := strconv.Itoa(Initial_set)
+	for n := 0; n < (Lambda + message); n++ {
+		input := strconv.Itoa(Challenge_set1[n])
+		HashInput += input
+	}
+
 	// use SHA3 to create output of 128 bit length
+	// Very confused about how we can use the secret for modular arithmetic?
 }
