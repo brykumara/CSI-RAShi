@@ -1,62 +1,59 @@
 package main
 
 import (
-	"crypto/rand"
-	"fmt"
-	"strconv"
+	m "math/rand"
 
 	"github.com/brykumara/circlclone/csidh"
 )
 
-const (
-	Lambda  = 128
-	message = 2
-)
+var prec uint = 1000
 
-var rng = rand.Reader
+//var PrivateKeySize = 37 // Private key is a vector of length 37
+var ExponentVectorLength = 74 // Exponent vector length of CSIDH 512 where B = 5
 
 func main() {
 
-	GeneratePairs(message)
-
 }
 
-func GeneratePairs(message int) { // Create pairs based on (3) of the CSI-RAShi paper
-	var secret csidh.PrivateKey
-	csidh.GeneratePrivateKey(&secret, rng)
-	Initial_set := make([]csidh.PublicKey, message)
-	GroupActionSet := make([]csidh.PublicKey, message)
-	for i := range Initial_set {
-		var pub csidh.PublicKey
-		csidh.GeneratePublicKey(&pub, &secret, rng)
-		Initial_set[i] = pub
-		csidh.GroupAction(&pub, &secret, rng)
-		GroupActionSet[i] = pub
+func CalculateP() uint64 {
+	var Prime uint64 = 1
+	for i := 0; i < csidh.PrimeCount; i++ {
+		Prime = Prime * csidh.Primes[i]
 	}
-	fmt.Println("Your initial indexed set is:", Initial_set)
-	fmt.Println("Your set after applying the secret is:", GroupActionSet)
-	fmt.Println("Your secret is:", secret)
+	Prime = 4*(Prime) - 1
+	return Prime
 }
 
-func NIZKP(Initial_set []csidh.PublicKey, GroupActionSet []csidh.PublicKey, secret csidh.PrivateKey) {
-	Challenge_set1 := make([]csidh.PublicKey, (message + Lambda))
-	Secretset := make([]csidh.PrivateKey, Lambda)
-	for j := 0; j < Lambda; j++ {
-		var secret2 csidh.PrivateKey
-		csidh.GeneratePrivateKey(&secret2, rng)
-		Secretset[j] = secret2
-		for i := 0; i < message; i++ {
-			csidh.GroupAction(&Initial_set[i+j], &Secretset[j], rng)
-			Challenge_set1[j+i] = Initial_set[i+j]
-		}
-	}
-
-	HashInput := strconv.Itoa(Initial_set)
-	for n := 0; n < (Lambda + message); n++ {
-		input := strconv.Itoa(Challenge_set1[n])
-		HashInput += input
-	}
-
-	// use SHA3 to create output of 128 bit length
-	// Very confused about how we can use the secret for modular arithmetic?
+func SampleSecret(Prime uint64) uint64 {
+	var convert int = (int)(Prime)
+	var secret = m.Intn(convert-0) + 0
+	var Secret uint64 = (uint64)(secret)
+	return Secret
 }
+
+func Secret2Vec(secret uint64) []uint64 {
+	Target := make([]uint64, csidh.PrimeCount)
+	for i := 0; i < csidh.PrimeCount; i++ {
+		Target[i] = 0
+	}
+	Target[0] = secret // Initialize target vector
+	// Babai Nearest Plane
+	for i := csidh.PrimeCount - 1; i >= 0; i-- {
+
+	}
+	return Target
+}
+
+//func ModCn2Vec(secret float64, vec *[csidh.PrivateKeySize]int8) {
+//	target := make([]float64, csidh.PrimeCount)
+//	target[0] = secret
+//
+//	for i := csidh.PrimeCount - 1; i >= 0; i-- {
+//		var ip1, floor float64
+//		Inner_product(target, 5+i*74, ip1)
+//
+//	}
+//
+//}
+
+// Calculates the inner product of 2 vectors of length 74
