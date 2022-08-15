@@ -22,7 +22,15 @@ func L1NormforOneVec(vec []float64) float64 {
 	return Norm
 }
 
-func L1NormforTwoVec(firstvec, secondvec []float64) float64 {
+func L1NormSumforTwoVec(firstvec, secondvec []float64) float64 {
+	var Norm float64 = 0
+	for i := 0; i < csidh.PrimeCount; i++ {
+		Norm += math.Abs(firstvec[i] + secondvec[i])
+	}
+	return Norm
+}
+
+func L1NormDiffforTwoVec(firstvec, secondvec []float64) float64 {
 	var Norm float64 = 0
 	for i := 0; i < csidh.PrimeCount; i++ {
 		Norm += math.Abs(firstvec[i] - secondvec[i])
@@ -33,17 +41,35 @@ func L1NormforTwoVec(firstvec, secondvec []float64) float64 {
 func L2NormforOneVec(vec []float64) float64 {
 	var Norm float64 = 0
 	for i := 0; i < csidh.PrimeCount; i++ {
-		Norm += vec[i]
+		Norm += vec[i] * vec[i]
 	}
-	Norm = math.Sqrt(Norm)
 	return Norm
 }
 
-func L2NormforTwoVec(firstvec, secondvec []float64) float64 {
+func L2NormSumforTwoVec(firstvec, secondvec []float64) float64 {
 	var Norm float64 = 0
 	for i := 0; i < csidh.PrimeCount; i++ {
-		Norm += firstvec[i] - secondvec[i]
+		Norm += (firstvec[i] + secondvec[i]) * (firstvec[i] + secondvec[i])
 	}
-	Norm = math.Sqrt(Norm)
 	return Norm
+}
+
+func L2NormDiffforTwoVec(firstvec, secondvec []float64) float64 {
+	var Norm float64 = 0
+	for i := 0; i < csidh.PrimeCount; i++ {
+		Norm += (firstvec[i] - secondvec[i]) * (firstvec[i] - secondvec[i])
+	}
+	return Norm
+}
+
+func AddVec(firstvec, secondvec []float64) {
+	for i := 0; i < csidh.PrimeCount; i++ {
+		firstvec[i] += secondvec[i]
+	}
+}
+
+func SubVec(firstvec, secondvec []float64) {
+	for i := 0; i < csidh.PrimeCount; i++ {
+		firstvec[i] -= secondvec[i]
+	}
 }
