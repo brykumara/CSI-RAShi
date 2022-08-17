@@ -6,8 +6,8 @@ import (
 	"github.com/brykumara/circlclone/csidh"
 )
 
-func Innerproduct(a, b []int64) int64 {
-	var InnerProduct int64 = 0
+func Innerproduct(a, b []float64) float64 {
+	var InnerProduct float64 = 0
 	for i := 0; i < csidh.PrimeCount; i++ {
 		InnerProduct += a[i] * b[i]
 	}
@@ -62,10 +62,11 @@ func L2NormDiffforTwoVec(firstvec, secondvec []float64) float64 {
 	return Norm
 }
 
-func AddVec(firstvec, secondvec []float64) {
+func AddVec(firstvec, secondvec []float64) []float64 {
 	for i := 0; i < csidh.PrimeCount; i++ {
 		firstvec[i] += secondvec[i]
 	}
+	return firstvec
 }
 
 func SubVec(firstvec, secondvec []float64) {
