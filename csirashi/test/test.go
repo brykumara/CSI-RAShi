@@ -21,18 +21,20 @@ const (
 )
 
 func main() {
-	Secret := SampleSecret
-	fmt.Println(Secret)
+	var Secret = SampleSecret(Prime)
+	Vec := Secret2Vec(Secret)
+	fmt.Println(Vec)
 }
 
-func SampleSecret(Prime float64) {
+func SampleSecret(Prime float64) float64 {
 	var prime = (int64)(Prime)
 	secret, err := c.Int(rng, big.NewInt(prime))
 	if err != nil {
 		panic(err)
 	}
-	Secret := secret.Int64()
-	fmt.Println(Secret)
+	Secrets := secret.Int64()
+	var Secret float64 = (float64)(Secrets)
+	return Secret
 }
 
 func Secret2Vec(secret float64) []float64 {
@@ -64,7 +66,7 @@ func Secret2Vec(secret float64) []float64 {
 		Sub_Multiple(Target, A, r)
 	}
 	Vec := Target
-	//Vec = Reduce(Vec,2,10000)
+	Reduce(Vec, 2, 10000)
 	return Vec
 }
 
@@ -79,12 +81,3 @@ func Compare(a, b float64) float64 {
 		}
 	}
 }
-
-//func CalculateP() uint64 {
-//	var Prime uint64 = 1
-//	for i := 0; i < csidh.PrimeCount; i++ {
-//		Prime = Prime * csidh.Primes[i]
-//	}
-//	Prime = 4*(Prime) - 1
-//	return Prime
-//}

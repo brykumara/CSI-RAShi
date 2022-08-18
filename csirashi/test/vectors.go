@@ -27,7 +27,7 @@ func Sub_Multiple(target, vec []float64, mul float64) []float64 {
 func Reduce32(vec []float64, pool_vectors float64) {
 	var norm = L1NormforOneVec(vec)
 	var counter = 0
-	for true {
+	for {
 		var change = 0
 		for i := 0; i < (int)(pool_vectors); i++ {
 			for j := 0; j < len(pool); j++ {
@@ -67,11 +67,11 @@ func Reduce(vec []float64, pool_vectors, trials float64) {
 	var Best = make([]float64, K)
 	Reduce32(VEC, pool_vectors)
 
-	memcpy(Best, VEC, 4*K)
+	Best = VEC
 	var best_len = L1NormforOneVec(VEC)
 
 	for j := 1; j < (int)(trials); j++ {
-		smh.memcpy(VEC, Best, 4*K)
+		VEC = Best
 		for n := 0; n < 2; n++ {
 			index, _ := c.Int(rng, big.NewInt((int64)(rand_max)))
 			var num = index.Int64() % 10000
@@ -86,7 +86,7 @@ func Reduce(vec []float64, pool_vectors, trials float64) {
 		var norm = L1NormforOneVec(VEC)
 		if norm < best_len {
 			best_len = norm
-			memcpy(Best, VEC, 4*K)
+			Best = VEC
 		}
 	}
 
