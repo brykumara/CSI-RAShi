@@ -3,7 +3,6 @@ package main
 import (
 	c "crypto/rand"
 	"fmt"
-	"math"
 	"math/big"
 	"strconv"
 
@@ -21,8 +20,7 @@ const (
 )
 
 func main() {
-	var Secret = SampleSecret(Prime)
-	Vec := Secret2Vec(Secret)
+	Vec := Secret2Vec(100)
 	fmt.Println(Vec)
 }
 
@@ -42,32 +40,47 @@ func Secret2Vec(secret float64) []float64 {
 	for i := 0; i < csidh.PrimeCount; i++ {
 		Target[i] = 0
 	}
-	Target[0] = secret // Initialize target vector
+	Target[0] = secret // Correct
 	B := make([]float64, csidh.PrimeCount*csidh.PrimeCount)
-
 	// Babai Nearest Plane
-	for i := csidh.PrimeCount - 1; i >= 0; i-- {
+	for i := (csidh.PrimeCount - 1); i >= 0; i-- {
 		for j := 0; j < len(B); j++ {
 			B[j] = B[j] + (float64)(i*74)
+		} // Correct
+		TargetxB := Innerproduct(Target, B) // Correct -> descends to 0
+		for j := 0; j < len(B); j++ {
+			B[j] = 0
+		} // Need to reset B every time
+		Converted, _ := strconv.ParseFloat(HKZIPStrings[i], 64)                                  // Correct
+		ip1 := new(big.Float).SetPrec(prec).Quo(big.NewFloat(TargetxB), big.NewFloat(Converted)) // Correct -> descends to 0
+		if ip1.Sign() < 0 {
+			delta := -0.5
+			ip1.Add(ip1, new(big.Float).SetFloat64(delta))
 		}
-		TargetxB := Innerproduct(Target, B)
-		Converted, _ := strconv.ParseFloat(HKZIPStrings[i], 64)
-		ip1 := (TargetxB / Converted)
-		ip1rounded := math.Floor(TargetxB / Converted)
-		remainder := ip1 - ip1rounded
-		if Compare(remainder, 0.5) > 0 {
-			ip1rounded = ip1rounded + 1
+		if ip1.Sign() < 0 {
+			delta := 0.5
+			ip1.Add(ip1, new(big.Float).SetFloat64(delta))
 		}
-		r := ip1rounded
+		ip1rounded, _ := ip1.Int(nil) // Correct
+		ip1r := new(big.Float).SetInt(ip1rounded)
+		remainder := new(big.Float).SetPrec(prec).Sub(ip1, ip1r) // Correct
+		if remainder.Cmp(big.NewFloat(0.5)) > 0 {
+			ip1r = ip1r.Add(ip1r, new(big.Float).SetFloat64(1))
+		}
+		r, _ := ip1r.Float64() // Correct
 		A := make([]float64, csidh.PrimeCount*csidh.PrimeCount)
 		for j := 0; j < len(B); j++ {
 			A[j] = A[j] + (float64)(i*74)
-		}
+		} // Correct
 		Sub_Multiple(Target, A, r)
+		fmt.Println(Target) //Seems to be a problem when substracting Target by A*r
+		for j := 0; j < len(A); j++ {
+			A[j] = 0
+		}
 	}
 	Vec := Target
 	Reduce(Vec, 2, 10000)
-	return Vec
+	return B
 }
 
 func Compare(a, b float64) float64 {
