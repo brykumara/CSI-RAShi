@@ -35,7 +35,7 @@ func SampleSecret(Prime float64) float64 {
 	return Secret
 }
 
-func Secret2Vec(secret float64) []float64 {
+func Secret2Vec(secret float64) float64 {
 	Target := make([]float64, csidh.PrimeCount)
 	for i := 0; i < csidh.PrimeCount; i++ {
 		Target[i] = 0
@@ -43,7 +43,7 @@ func Secret2Vec(secret float64) []float64 {
 	Target[0] = secret // Correct
 	B := make([]float64, csidh.PrimeCount*csidh.PrimeCount)
 	// Babai Nearest Plane
-	for i := (csidh.PrimeCount - 1); i >= 0; i-- {
+	for i := (csidh.PrimeCount - 1); i >= 73; i-- {
 		for j := 0; j < len(B); j++ {
 			B[j] = B[j] + (float64)(i*74)
 		} // Correct
@@ -67,20 +67,20 @@ func Secret2Vec(secret float64) []float64 {
 		if remainder.Cmp(big.NewFloat(0.5)) > 0 {
 			ip1r = ip1r.Add(ip1r, new(big.Float).SetFloat64(1))
 		}
-		r, _ := ip1r.Float64() // Correct
+		r, _ := ip1r.Float64()
 		A := make([]float64, csidh.PrimeCount*csidh.PrimeCount)
 		for j := 0; j < len(B); j++ {
 			A[j] = A[j] + (float64)(i*74)
 		} // Correct
 		Sub_Multiple(Target, A, r)
-		fmt.Println(Target) //Seems to be a problem when substracting Target by A*r
+		//Seems to be a problem when substracting Target by A*r -> converges to negative infinity
 		for j := 0; j < len(A); j++ {
 			A[j] = 0
 		}
 	}
 	Vec := Target
 	Reduce(Vec, 2, 10000)
-	return B
+	return 0
 }
 
 func Compare(a, b float64) float64 {
