@@ -20,7 +20,7 @@ const (
 )
 
 func main() {
-	Vec := Secret2Vec(100)
+	Vec := Secret2Vec(100000)
 	fmt.Println(Vec)
 }
 
@@ -41,9 +41,11 @@ func Secret2Vec(secret float64) float64 {
 		Target[i] = 0
 	}
 	Target[0] = secret //
+	C := make([]float64, csidh.PrimeCount)
+	C[0] = secret
 	B := make([]float64, csidh.PrimeCount*csidh.PrimeCount)
 	// Babai Nearest Plane
-	for i := (csidh.PrimeCount - 1); i >= 70; i-- { // 74
+	for i := (csidh.PrimeCount - 1); i >= 0; i-- { // 74
 		for j := 0; j < len(B); j++ {
 			B[j] = B[j] + (float64)(i*74)
 		} //
@@ -71,19 +73,15 @@ func Secret2Vec(secret float64) float64 {
 		A := make([]float64, csidh.PrimeCount*csidh.PrimeCount)
 		for j := 0; j < len(A); j++ { // 74*74
 			A[j] = A[j] + (float64)(i*74)
-			// r is locked for i, and so is i, loop over each element of A first
 		}
-		for j := 0; j < len(A); j++ {
-			A[j] = A[j] * r
-		}
-		fmt.Println(A[10])
-		// A*r does descend to 0, so adding them should not be a problem?
-		//Sub_Multiple(Target, A, r)
-		// For this, C seems to be ok. Target is just the value of C?
-
+		for j := 0; j < len(C); j++ {
+			C[j] = C[j] - A[j]*r
+		} //
+		// It looks like there is a change of A[j]*r when using it to minus target?
+		fmt.Println(C)
 		//Seems to be a problem when substracting Target by A*r gets too large. Use big float?
 	} //go run test.go hkz.go pool.go norms.go vectors.go
-	//Vec := Target
+	//Vec := C
 	//Reduce(Vec, 2, 10000)
 	return 0
 }
