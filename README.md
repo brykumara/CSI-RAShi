@@ -6,4 +6,4 @@ This implementation is based on the CSI-FiSh digital signature (https://eprint.i
 
 In this implementation, we have worked with the CIRCL library to implement lattice reduction using the BKZ-40, BKZ-50, and HKZ bases alongside the L1 and L2 norms. The results indicate that this procedure is extremely inefficient, being on par with other CSIDH implementations, and is a bitter pill that needs to be swallowed only once per party for multiparty computations. Without this feature available, users would have to resort to Fiat-Shamir aborts which also has a fairly long run time. 
 
-This dissertation was supervised by Prof. Philipp Jovanovic and Ms. Maria Real-Corte Santos in 2022.
+This dissertation was supervised by Prof. Philipp Jovanovic and Ms. Maria Real-Corte Santos over the summer of 2022.
