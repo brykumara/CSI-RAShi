@@ -59,7 +59,7 @@ func Secret2Vec(secret float64) []float64 {
 		for j := 0; j < len(B); j++ {
 			B[j] = 0
 		} //
-		HKZIPS, _ := strconv.ParseFloat(HKZIPStrings[i], 64) // CHANGE
+		HKZIPS, _ := strconv.ParseFloat(bkz50IPStrings[i], 64) // CHANGE
 		ip1 := new(big.Float).SetPrec(prec).Quo(big.NewFloat(TargetxB), big.NewFloat(HKZIPS))
 		if ip1.Sign() < 0 {
 			delta := -0.5

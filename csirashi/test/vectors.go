@@ -18,14 +18,13 @@ var rel_lat = make([]float64, K*K)
 
 func Sub_Multiple(target, vec []float64, mul float64) []float64 {
 	for i := 0; i < csidh.PrimeCount; i++ {
-		vec[i] = vec[i] * mul
-		target[i] = target[i] - vec[i]
+		target[i] -= vec[i] * mul
 	}
 	return target
 }
 
 func Reduce32(vec []float64, pool_vectors float64) {
-	var norm = L1NormforOneVec(vec)
+	var norm = L2NormforOneVec(vec) // CHANGE
 	var counter = 0
 	for {
 		var change = 0
@@ -37,14 +36,14 @@ func Reduce32(vec []float64, pool_vectors float64) {
 			for n := 0; n < len(poolconv); n++ {
 				poolconv[n] = (float64)(pool[n])
 			}
-			var plus_norm = L1NormSumforTwoVec(vec, poolconv)
+			var plus_norm = L2NormSumforTwoVec(vec, poolconv) // CHANGE
 			if plus_norm < norm {
 				norm = plus_norm
 				counter += 1
 				AddVec(vec, poolconv)
 				change = 1
 			}
-			var minus_norm = L1NormDiffforTwoVec(vec, poolconv)
+			var minus_norm = L2NormDiffforTwoVec(vec, poolconv) //CHANGE
 			if minus_norm < norm {
 				norm = minus_norm
 				counter += 1
@@ -68,7 +67,7 @@ func Reduce(vec []float64, pool_vectors, trials float64) {
 	Reduce32(VEC, pool_vectors)
 
 	Best = VEC
-	var best_len = L1NormforOneVec(VEC)
+	var best_len = L2NormforOneVec(VEC) // CHANGE
 
 	for j := 1; j < (int)(trials); j++ {
 		VEC = Best
@@ -83,7 +82,7 @@ func Reduce(vec []float64, pool_vectors, trials float64) {
 			VEC = AddVec(VEC, newpool)
 		}
 		Reduce32(VEC, pool_vectors)
-		var norm = L1NormforOneVec(VEC)
+		var norm = L2NormforOneVec(VEC) // CHANGE
 		if norm < best_len {
 			best_len = norm
 			Best = VEC
